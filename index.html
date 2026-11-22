@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мастерская украшений "Lumina"</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* === ЦВЕТОВАЯ ПАЛИТРА === */
+        :root { 
+            --primary: #dfa8ad; 
+            --primary-hover: #c99398;
+            --bg: #fdfbfb; 
+            --text: #4c3d40; 
+            --card-bg: #ffffff; 
+            --header-bg: #ffffff; 
+            --shadow: rgba(223, 168, 173, 0.15); 
+            --border: #f2e6e7; 
+        }
+        body.dark-theme { 
+            --bg: #1c1819; --text: #f0e6e7; --card-bg: #262122; --header-bg: #1c1819; --shadow: rgba(0, 0, 0, 0.3); --border: #3a3234; 
+        }
+
+        /* === РЕЖИМ ВЫСОКОЙ КОНТРАСТНОСТИ === */
+        body.high-contrast {
+            --bg: #000000; --text: #ffffff; --card-bg: #000000; --header-bg: #000000;
+            --primary: #ffff00; --primary-hover: #cccc00; --border: #ffff00; --shadow: none;
+        }
+        body.high-contrast .hero { background: #000; color: #fff; }
+        body.high-contrast .btn, body.high-contrast .filter-btn.active { color: #000; }
+        body.high-contrast img { border: 2px solid #ffff00; }
+        body.high-contrast .about-img { box-shadow: 10px 10px 0px #ffff00; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; transition: all 0.3s; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        /* === ШАПКА === */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 5%; background: var(--header-bg); 
+            box-shadow: 0 2px 15px var(--shadow); position: sticky; top: 0; z-index: 100; 
+        }
+        .logo { font-size: 26px; font-weight: 600; }
+        .logo span { color: var(--primary); }
+        
+        .nav { display: flex; align-items: center; gap: 25px; }
+        .nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: color 0.3s; }
+        .nav a:hover { color: var(--primary); }
+
+        .nav-actions { display: flex; gap: 10px; align-items: center; position: relative; }
+
+        .icon-btn, .fav-link-btn { 
+            background: none; border: 1px solid var(--border); color: var(--text); 
+            padding: 8px 15px; border-radius: 30px; cursor: pointer; font-weight: 500; 
+            font-size: 16px; transition: all 0.3s; display: flex; align-items: center; 
+        }
+        .fav-link-btn { border-color: var(--primary); }
+        .icon-btn:hover, .fav-link-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+        
+        .menu-btn { font-size: 24px; background: none; border: none; color: var(--text); cursor: pointer; transition: color 0.3s; padding: 5px 10px; }
+        .menu-btn:hover { color: var(--primary); }
+
+        /* === ПАНЕЛЬ НАСТРОЕК === */
+        .settings-panel { 
+            position: absolute; top: 150%; right: 0;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; 
+            box-shadow: 0 10px 25px var(--shadow); z-index: 999; width: 280px; 
+            display: none; flex-direction: column; gap: 10px; 
+        }
+        .settings-panel.active { display: flex; }
+        .settings-panel h3 { font-size: 18px; margin-bottom: 10px; text-align: center; }
+        .settings-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .settings-item button { background: var(--primary); color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .settings-item button:hover { background: var(--primary-hover); }
+        .cart-badge { background: #e88a8a; color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 12px; margin-left: 5px; font-weight: bold; }
+
+        /* === ГЛАВНЫЙ ЭКРАН === */
+        .hero { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #f4e1e3, #dfa8ad); color: #4c3d40; padding: 20px; }
+        .hero h1 { font-size: 48px; margin-bottom: 20px; }
+        .hero p { font-size: 20px; margin-bottom: 40px; font-weight: 500; }
+        .btn { padding: 15px 35px; background: var(--primary); color: #fff; text-decoration: none; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px var(--shadow); }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-3px); }
+
+        /* === СЕКЦИИ === */
+        .catalog, .materials, .order-section, .reviews-section { padding: 60px 5%; }
+        h2 { text-align: center; font-size: 36px; margin-bottom: 30px; }
+        .filters { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .filter-btn { padding: 8px 20px; border: 1px solid var(--primary); background: var(--card-bg); color: var(--text); border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary); color: #fff; }
+
+        /* === ТОВАРЫ === */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        .card { background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px var(--shadow); transition: transform 0.3s; position: relative; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 250px; object-fit: cover; }
+        .card-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-info h3 { font-size: 20px; margin-bottom: 8px; }
+        .card-info p { font-size: 14px; margin-bottom: 12px; opacity: 0.8; }
+        .card-info strong { color: var(--primary); font-size: 18px; margin-bottom: 15px; }
+        .add-to-cart-btn { background: var(--bg); border: 1px solid var(--primary); color: var(--primary); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; margin-top: auto; }
+        .add-to-cart-btn:hover { background: var(--primary); color: #fff; }
+        .fav-btn { position: absolute; top: 15px; right: 15px; background: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .fav-btn:hover { transform: scale(1.1); }
+
+        /* === О НАС И ПРЕИМУЩЕСТВА === */
+        .about-section { padding: 60px 5%; background: var(--card-bg); }
+        .about-content { display: flex; align-items: center; gap: 50px; max-width: 1100px; margin: 0 auto; }
+        .about-text { flex: 1; }
+        .about-text h2 { text-align: left; margin-bottom: 20px; }
+        .about-text p { margin-bottom: 15px; opacity: 0.8; }
+        .about-img { flex: 1; width: 50%; max-height: 400px; object-fit: cover; border-radius: 15px; box-shadow: 10px 10px 0px var(--primary); }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .feature-card { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px var(--shadow); border-bottom: 3px solid var(--primary); }
+
+        /* === ОТЗЫВЫ === */
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto; }
+        .review-card { background: var(--card-bg); padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px var(--shadow); }
+        .stars { color: #f1c40f; font-size: 20px; margin-bottom: 15px; }
+        .review-card p { font-style: italic; margin-bottom: 15px; opacity: 0.8; }
+        .review-card h4 { color: var(--primary); }
+
+        /* === ФОРМА === */
+        .order-form { max-width: 600px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px var(--shadow); display: flex; flex-direction: column; gap: 15px; }
+        .order-form input, .order-form textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-family: inherit; }
+        .order-form input:focus, .order-form textarea:focus { outline: none; border-color: var(--primary); }
+        .form-message { text-align: center; font-weight: bold; }
+
+        /* === ПОДВАЛ === */
+        .footer { background: var(--header-bg); padding: 60px 5% 20px; border-top: 1px solid var(--border); }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1100px; margin: 0 auto; }
+        .footer-content h3 { margin-bottom: 15px; color: var(--primary); }
+        .footer-info p, .footer-contacts p { margin-bottom: 10px; opacity: 0.8; }
+        .socials { display: flex; gap: 15px; margin-top: 15px; }
+        .socials a { color: var(--text); text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .socials a:hover { color: var(--primary); }
+        .subscribe-form { display: flex; gap: 10px; margin-top: 15px; }
+        .subscribe-form input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); }
+        .footer-bottom { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); opacity: 0.7; font-size: 14px; }
+
+        /* === МОДАЛЬНЫЕ ОКНА === */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; position: relative; max-height: 80vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 10px; right: 15px; font-size: 30px; cursor: pointer; color: var(--text); }
+        #fav-list, #cart-list { list-style: none; margin-top: 20px; }
+        #fav-list li, #cart-list li { padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+
+        /* === МОБИЛЬНАЯ ВЕРСИЯ === */
+        @media (max-width: 900px) {
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .nav-actions { width: 100%; justify-content: center; flex-wrap: wrap; }
+            .nav { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: var(--header-bg); padding: 20px; box-shadow: 0 10px 15px var(--shadow); z-index: 90; gap: 15px; }
+            .nav.active { display: flex; }
+            .settings-panel { position: absolute; top: 100%; right: 0; width: 100%; max-width: 320px; margin-top: 10px; }
+            .hero h1 { font-size: 28px; }
+            h2 { font-size: 26px; }
+            .about-content { flex-direction: column; text-align: center; gap: 30px; }
+            .about-text h2 { text-align: center; }
+            .about-img { width: 100%; box-shadow: 0px 10px 0px var(--primary); }
+            .subscribe-form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">Lumina<span>Jewelry</span></div>
+        
+        <nav class="nav" id="nav-menu">
+            <a href="#catalog">Галерея</a>
+            <a href="#about">О нас</a>
+            <a href="#materials">Материалы</a>
+            <a href="#order">Заказ</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button id="theme-toggle" class="icon-btn" aria-label="Сменить тему">🌙</button>
+            <button id="open-fav-btn" class="fav-link-btn">❤️ Избранное (<span id="fav-count">0</span>)</button>
+            <button class="menu-btn" id="toggle-menu" aria-label="Меню">☰</button>
+
+            <div class="settings-panel" id="settings-panel">
+                <h3>Настройки</h3>
+                <div class="settings-item">
+                    <span>🛒 Корзина <span class="cart-badge" id="cart-count">0</span></span>
+                    <button id="open-cart-btn">Открыть</button>
+                </div>
+                <div class="settings-item">
+                    <span>🔊 Озвучка</span>
+                    <button id="speak-btn">Слушать</button>
+                </div>
+                <div class="settings-item">
+                    <span>🌓 Контрастность</span>
+                    <button id="contrast-btn">Вкл/Выкл</button>
+                </div>
+                <div class="settings-item">
+                    <span>🔠 Шрифт</span>
+                    <div>
+                        <button id="font-minus">A-</button>
+                        <button id="font-plus">A+</button>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <span>⬆️ Наверх</span>
+                    <button id="scroll-top">Вверх</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section id="hero" class="hero">
+            <h1>Уникальные украшения ручной работы</h1>
+            <p>Создаем изделия из натуральных камней и серебра с любовью.</p>
+            <a href="#catalog" class="btn">Смотреть коллекцию</a>
+        </section>
+
+        <section id="catalog" class="catalog">
+            <h2>Наши изделия</h2>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Все</button>
+                <button class="filter-btn" data-filter="silver">Серебро</button>
+                <button class="filter-btn" data-filter="stone">Камни</button>
+            </div>
+            <div class="grid-container" id="product-grid"></div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>О нашей мастерской</h2>
+                    <p>Мы создаем украшения, которые становятся частью вашей истории. Наша мастерская работает с 2018 года. Мы используем только натуральные камни и серебро 925 пробы.</p>
+                    <p>Каждое изделие проходит ручную обработку. Мы не делаем масс-маркет — мы создаем уникальные вещи с душой.</p>
+                </div>
+                <!-- Здесь используем вашу картинку -->
+                <img src="images/uiwber.jpg" alt="О мастерской" class="about-img">
+            </div>
+        </section>
+
+        <section id="materials" class="materials">
+            <h2>Наши материалы</h2>
+            <div class="features">
+                <div class="feature-card"><h3>Натуральные камни</h3><p>Лазурит, малахит, аметист.</p></div>
+                <div class="feature-card"><h3>Серебро 925</h3><p>Гипоаллергенные сплавы.</p></div>
+                <div class="feature-card"><h3>Ручная работа</h3><p>Уникальный дизайн.</p></div>
+            </div>
+        </section>
+
+        <section id="reviews" class="reviews-section">
+            <h2>Отзывы наших клиентов</h2>
+            <div class="reviews-grid">
+                <div class="review-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"Заказывала серьги. Очень довольна!"</p><h4>— Анна С.</h4></div>
+                <div class="review-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"Покупал кольцо в подарок. Жена в восторге!"</p><h4>— Дмитрий К.</h4></div>
+                <div class="review-card"><div class="stars">⭐⭐⭐⭐⭐</div><p>"Очень нравится индивидуальный подход."</p><h4>— Екатерина М.</h4></div>
+            </div>
+        </section>
+
+        <section id="order" class="order-section">
+            <h2>Оставить заказ</h2>
+            <form id="order-form" class="order-form" novalidate>
+                <input type="text" id="name" placeholder="Ваше имя" required>
+                <input type="email" id="email" placeholder="Ваш Email" required>
+                <textarea id="message" placeholder="Какое украшение вас интересует?" required></textarea>
+                <button type="submit" class="btn">Отправить заявку</button>
+                <p id="form-message" class="form-message"></p>
+            </form>
+        </section>
+    </main>
+
+    <footer class="footer" id="contacts">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Lumina Jewelry</h3>
+                <p>Мастерская украшений ручной работы.</p>
+                <div class="socials"><a href="#">VK</a><a href="#">Telegram</a><a href="#">WhatsApp</a></div>
+            </div>
+            <div class="footer-contacts">
+                <h3>Контакты</h3>
+                <p>Телефон: +7 (999) 123-45-67</p>
+                <p>Email: info@lumina-jewelry.ru</p>
+                <p>Адрес: г. Москва, ул. Творческая, д. 1</p>
+            </div>
+            <div class="footer-subscribe">
+                <h3>Узнать о новинках</h3>
+                <form id="subscribe-form" class="subscribe-form">
+                    <input type="email" placeholder="Ваш Email" required>
+                    <button type="submit" class="btn">Подписаться</button>
+                </form>
+                <p id="sub-msg" style="color: var(--primary); font-size: 14px; margin-top: 10px;"></p>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Мастерская "Lumina". Все права защищены.</p></div>
+    </footer>
+
+    <div class="modal" id="fav-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2>Ваше избранное</h2>
+            <ul id="fav-list"></ul>
+        </div>
+    </div>
+
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-cart-modal">&times;</span>
+            <h2>Ваша корзина</h2>
+            <ul id="cart-list"></ul>
+            <h3 style="margin-top: 20px; text-align: right; color: var(--primary);">Итого: <span id="cart-total">0</span> ₽</h3>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ВСТАВЛЯЕМ ВАШИ ФОТОГРАФИИ ПО КОНТЕКСТУ
+            const products = [
+                { id: 1, name: "Серьги 'Аметист'", price: 4500, material: "Серебро, аметист", category: "stone", img: "images/ring.jpg" },
+                { id: 2, name: "Колье 'Лазурит'", price: 6200, material: "Серебро, лазурит", category: "stone", img: "images/heik.jpg" },
+                { id: 3, name: "Браслет 'Малахит'", price: 3800, material: "Медь, малахит", category: "stone", img: "images/jeow.jpg" },
+                { id: 4, name: "Кольцо 'Роза'", price: 5000, material: "Серебро 925", category: "silver", img: "images/uiwber.jpg" }
+            ];
+
+            let favorites = JSON.parse(localStorage.getItem('jewelryFavorites')) || [];
+            let cart = JSON.parse(localStorage.getItem('jewelryCart')) || [];
+            let currentFilter = 'all';
+            let currentFontSize = 100;
+
+            const grid = document.getElementById('product-grid');
+            const favCount = document.getElementById('fav-count');
+            const cartCount = document.getElementById('cart-count');
+            const modal = document.getElementById('fav-modal');
+            const cartModal = document.getElementById('cart-modal');
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            const toggleMenuBtn = document.getElementById('toggle-menu');
+            const navMenu = document.getElementById('nav-menu');
+            const settingsPanel = document.getElementById('settings-panel');
+
+            // === УНИВЕРСАЛЬНАЯ КНОПКА МЕНЮ ===
+            toggleMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (window.innerWidth <= 900) {
+                    navMenu.classList.toggle('active');
+                    settingsPanel.classList.toggle('active');
+                } else {
+                    settingsPanel.classList.toggle('active');
+                }
+            });
+
+            document.querySelectorAll('.nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                });
+            });
+
+            // === ТЕМА ===
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+                themeToggle.textContent = '☀️';
+            }
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-theme');
+                const isDark = document.body.classList.contains('dark-theme');
+                themeToggle.textContent = isDark ? '☀️' : '🌙';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // === КОНТРАСТНОСТЬ ===
+            const contrastBtn = document.getElementById('contrast-btn');
+            if (localStorage.getItem('contrast') === 'true') {
+                document.body.classList.add('high-contrast');
+            }
+            contrastBtn.addEventListener('click', () => {
+                document.body.classList.toggle('high-contrast');
+                const isHighContrast = document.body.classList.contains('high-contrast');
+                localStorage.setItem('contrast', isHighContrast);
+            });
+
+            // === РЕНДЕР ТОВАРОВ ===
+            function renderProducts() {
+                grid.innerHTML = '';
+                const filtered = products.filter(p => currentFilter === 'all' || p.category === currentFilter);
+                filtered.forEach(product => {
+                    const isFav = favorites.includes(product.id);
+                    grid.innerHTML += `
+                        <div class="card">
+                            <img src="${product.img}" alt="${product.name}">
+                            <button class="fav-btn" data-id="${product.id}">${isFav ? '❤️' : '🤍'}</button>
+                            <div class="card-info">
+                                <h3>${product.name}</h3>
+                                <p>${product.material}</p>
+                                <strong>${product.price} ₽</strong>
+                                <button class="add-to-cart-btn" data-id="${product.id}">В корзину</button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.querySelectorAll('.fav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.currentTarget.dataset.id);
+                        if (favorites.includes(id)) {
+                            favorites = favorites.filter(f => f !== id);
+                            e.currentTarget.textContent = '🤍';
+                        } else {
+                            favorites.push(id);
+                            e.currentTarget.textContent = '❤️';
+                        }
+                        localStorage.setItem('jewelryFavorites', JSON.stringify(favorites));
+                        favCount.textContent = favorites.length;
+                    });
+                });
+
+                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = parseInt(e.currentTarget.dataset.id);
+                        const product = products.find(p => p.id === id);
+                        const existingItem = cart.find(item => item.id === id);
+                        if (existingItem) existingItem.quantity += 1;
+                        else cart.push({ ...product, quantity: 1 });
+                        localStorage.setItem('jewelryCart', JSON.stringify(cart));
+                        updateCartCount();
+                        e.currentTarget.textContent = 'Добавлено!';
+                        setTimeout(() => { e.currentTarget.textContent = 'В корзину'; }, 1500);
+                    });
+                });
+            }
+
+            // === ИЗБРАННОЕ И КОРЗИНА ===
+            function updateCartCount() {
+                cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            }
+
+            document.getElementById('open-fav-btn').addEventListener('click', () => {
+                const list = document.getElementById('fav-list');
+                list.innerHTML = favorites.length === 0 ? '<li>Пусто</li>' : favorites.map(id => {
+                    const p = products.find(prod => prod.id === id);
+                    return `<li><span>${p.name}</span> <strong>${p.price} ₽</strong></li>`;
+                }).join('');
+                modal.classList.add('active');
+            });
+
+            document.getElementById('open-cart-btn').addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                settingsPanel.classList.remove('active');
+                const list = document.getElementById('cart-list');
+                let total = 0;
+                list.innerHTML = cart.length === 0 ? '<li>Пусто</li>' : cart.map(item => {
+                    total += item.price * item.quantity;
+                    return `<li><span>${item.name} (x${item.quantity})</span> <strong>${item.price * item.quantity} ₽</strong></li>`;
+                }).join('');
+                document.getElementById('cart-total').textContent = total;
+                cartModal.classList.add('active');
+            });
+
+            document.getElementById('close-modal').addEventListener('click', () => modal.classList.remove('active'));
+            document.getElementById('close-cart-modal').addEventListener('click', () => cartModal.classList.remove('active'));
+
+            // === ФИЛЬТРЫ ===
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    currentFilter = e.currentTarget.dataset.filter;
+                    renderProducts();
+                });
+            });
+
+            // === НАСТРОЙКИ ===
+            document.getElementById('speak-btn').addEventListener('click', () => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const text = "Добро пожаловать в мастерскую украшений Люмина. Уникальные украшения ручной работы.";
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ru-RU';
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+
+            document.getElementById('font-plus').addEventListener('click', () => {
+                if (currentFontSize < 140) { currentFontSize += 10; document.body.style.fontSize = `${currentFontSize}%`; }
+            });
+            document.getElementById('font-minus').addEventListener('click', () => {
+                if (currentFontSize > 70) { currentFontSize -= 10; document.body.style.fontSize = `${currentFontSize}%`; }
+            });
+            document.getElementById('scroll-top').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Закрытие по клику вне области
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+                if (e.target === cartModal) cartModal.classList.remove('active');
+                if (!e.target.closest('.nav-actions')) {
+                    navMenu.classList.remove('active');
+                    settingsPanel.classList.remove('active');
+                }
+            });
+
+            // === ФОРМЫ ===
+            document.getElementById('order-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const msg = document.getElementById('form-message');
+                msg.textContent = 'Заявка отправлена!';
+                msg.style.color = 'var(--primary)';
+                e.target.reset();
+                setTimeout(() => { msg.textContent = ''; }, 3000);
+            });
+
+            document.getElementById('subscribe-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const msg = document.getElementById('sub-msg');
+                msg.textContent = 'Спасибо за подписку!';
+                e.target.reset();
+                setTimeout(() => { msg.textContent = ''; }, 3000);
+            });
+
+            // Инициализация
+            favCount.textContent = favorites.length;
+            updateCartCount();
+            renderProducts();
+        });
+    </script>
+</body>
+</html>
